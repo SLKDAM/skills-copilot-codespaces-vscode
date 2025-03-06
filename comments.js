@@ -1,43 +1,15 @@
 //create web server
 const express = require('express');
 const app = express();
-const port = 3000;
-const fs = require('fs');
-const bodyParser = require('body-parser');
-const cors = require('cors');
-const path = require('path');
-const comments = require('./comments.json');
+const commentController = require('./controllers/comments');
 
-//middleware
-app.use(cors());
-app.use(bodyParser.json());
+//Handle request
+express.Router.get('/', commentController.comment_list);
+express.Router.post('/', commentController.comment_create);
+express.Router.put('/:id', commentController.comment_update);
+express.Router.delete('/:id', commentController.comment_delete);
 
-//GET request to /comments
-app.get('/comments', (req, res) => {
-  res.json(comments);
-});
-
-//POST request to /comments
-app.post('/comments', (req, res) => {
-  const newComment = req.body;
-  comments.push(newComment);
-  fs.writeFileSync('./comments.json', JSON.stringify(comments));
-  res.json(newComment);
-});
-
-//DELETE request to /comments
-app.delete('/comments/:id', (req, res) => {
-  const { id } = req.params;
-  const comment = comments.find((comment) => comment.id == id);
-  if (!comment) {
-    res.status(404).json({ error: 'Comment not found' });
-    return;
-  }
-  comments = comments.filter((comment) => comment.id != id);
-  fs.writeFileSync('./comments.json', JSON.stringify(comments));
-  res.json({ success: 'Comment deleted' });
-});
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
+//Start server
+app.listen(3000, () => {
+    console.log('Server is running');
 });
