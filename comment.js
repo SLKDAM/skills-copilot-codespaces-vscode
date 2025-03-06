@@ -1,29 +1,19 @@
-//Create web server
+//create web server
 const express = require('express');
 const app = express();
 const port = 3000;
-
-// Get request
+//set up the view engine
+app.set('view engine', 'ejs');
+//set up the static file
+app.use(express.static('public'));
+app.use(express.urlencoded({ extended: true }));
+const comment = [];
 app.get('/', (req, res) => {
-  res.send('Hello World!');
-});
-
-// Post request
-app.post('/', (req, res) => {
-  res.send('Got a POST request');
-});
-
-// Put request
-app.put('/user', (req, res) => {
-  res.send('Got a PUT request at /user');
-});
-
-// Delete request
-app.delete('/user', (req, res) => {
-  res.send('Got a DELETE request at /user');
-});
-
-// Listen to port
+    res.render('index', { comment });
+})
+app.post('/add_comment', (req, res) => {
+    comment.push(req.body.comment);
+    res.redirect('/');
+})
 app.listen(port, () => {
-  console.log(`Example app listening at http://localhost:${port}`);
-});
+    console.log(`Server is running on http://localhost
